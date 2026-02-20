@@ -1,3 +1,4 @@
 export * from "./Config"
-export * from "./PlayerInput"
+export * from "./FrameInput"
 export * from "./RenderCommand"
+export * from "./LoadCommand"
