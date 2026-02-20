@@ -80,7 +80,7 @@ function handleRenderCommand(app: Application<Renderer>, command: RenderCommand)
 }
 
 function handleLoadCommand(app: Application<Renderer>, newlyLoaded: Record<string, any>, command: LoadCommand) {
-    let result = Assets.load(command.URLPath).then((asset) => {
+    Assets.load(command.URLPath).then((asset) => {
         newlyLoaded[command.ID] = asset;
         return asset;
     })

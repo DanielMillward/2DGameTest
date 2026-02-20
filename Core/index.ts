@@ -4,11 +4,7 @@ export class Core {
     _test_label: Entity | null = null;
     _initial_assets: AssetList;
     constructor(public config: Config) {
-        this._initial_assets = {
-            Unloaded: ["https://pixijs.com/assets/bunny.png"],
-            Loading: [],
-            Loaded: []
-        }
+        this._initial_assets = new AssetList(["https://pixijs.com/assets/bunny.png"])
     }
 
 
@@ -17,7 +13,7 @@ export class Core {
         if (this._test_label == null) {
             this._test_label = new Entity(55)
             const createData = new CreateData(CreateType.TEXT, new Vector2(555, 150))
-            createData.text = "Hellldfso world!"
+            createData.text = "Loading Bunny..."
             const command: RenderCommand = {
                 CommandCategory: CommandCategory.RENDER,
                 RenderCommandType: RenderCommandType.CREATE,
@@ -27,6 +23,7 @@ export class Core {
             out.push(command)
         }
         // Send command to load all initial assets, move to Loading
+        this._initial_assets.UpdateLoadingToLoaded(frameInput.NewLoadedAssetIDs)
         while (this._initial_assets.Unloaded.length > 0) {
             const asset = this._initial_assets.Unloaded.pop();
             if (!asset) break;
@@ -52,9 +49,24 @@ class Entity {
     }
 }
 
-interface AssetList {
-    Unloaded: string[]
-    Loading: string[]
-    Loaded: string[]
+class AssetList {
+    Unloaded: string[];
+    Loading: string[];
+    Loaded: string[];
+    constructor(unloadedList: string[]) {
+        this.Unloaded = unloadedList;
+        this.Loading = [];
+        this.Loaded = [];
+    }
+
+    UpdateLoadingToLoaded(NewLoadedAssetIDs: string[] | undefined) {
+        if (NewLoadedAssetIDs == undefined) {
+            return
+        }
+        this.Loading = this.Loading.filter((id) => !NewLoadedAssetIDs.includes(id))
+        for (const id of NewLoadedAssetIDs) {
+            this.Loaded.push(id)
+        }
+    }
 }
 
